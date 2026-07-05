@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bracing Estimate Calculator | Infinity Design & Consultant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#C9A84C;
+    --gold-light:#E4CD84;
+    --gold-dim:#9C8034;
+    --black:#0B0B0C;
+    --black-2:#141416;
+    --black-3:#1D1D20;
+    --line:#2B2A26;
+    --paper:#FAF8F3;
+    --paper-dim:#EFEAE0;
+    --ink:#1B1A17;
+    --ink-dim:#6B6558;
+    --danger:#B4553D;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--black);
+    color:var(--paper);
+    font-family:'DM Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(1200px 300px at 15% -40%, rgba(201,168,76,0.14), transparent 60%),
+      var(--black);
+  }
+  .top-inner{
+    max-width:1180px;margin:0 auto;padding:34px 24px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:16px;}
+  .brand svg{width:56px;height:56px;flex-shrink:0;}
+  .brand-text .name{
+    font-family:'Cormorant Garamond',serif;font-weight:700;font-size:28px;letter-spacing:0.5px;color:var(--paper);line-height:1;
+  }
+  .brand-text .sub{
+    font-size:11px;letter-spacing:3.5px;color:var(--gold);text-transform:uppercase;margin-top:6px;
+  }
+  .tagline{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--gold-light);
+    text-align:right;
+  }
+  .toolname{
+    text-align:center;padding:26px 24px 8px;
+  }
+  .toolname h1{
+    font-family:'Cormorant Garamond',serif;font-weight:700;font-size:42px;margin:0;
+    background:linear-gradient(180deg,#F3E3B0,var(--gold) 60%,var(--gold-dim));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .toolname p{color:#B9B4A6;font-size:14.5px;margin:10px 0 0;letter-spacing:0.3px;}
+
+  /* ---------- TABS ---------- */
+  .tabs{
+    display:flex;gap:0;justify-content:center;margin:30px 0 0;border-bottom:1px solid var(--line);
+  }
+  .tab-btn{
+    background:none;border:none;color:#9A9488;font-family:'DM Sans',sans-serif;
+    font-size:14.5px;font-weight:600;letter-spacing:0.5px;padding:14px 26px;cursor:pointer;
+    position:relative;top:1px;border-bottom:2px solid transparent;
+    transition:color .2s ease;
+  }
+  .tab-btn.active{color:var(--gold-light);border-bottom:2px solid var(--gold);}
+  .tab-btn:hover{color:var(--gold-light);}
+
+  .panel{display:none;padding-top:34px;}
+  .panel.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:var(--black-2);border:1px solid var(--line);border-radius:10px;
+    padding:26px 26px 22px;margin-bottom:24px;
+  }
+  .card-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px;
+    border-bottom:1px solid var(--line);padding-bottom:14px;flex-wrap:wrap;
+  }
+  .card-head h2{
+    font-family:'Cormorant Garamond',serif;font-size:23px;color:var(--gold-light);margin:0;font-weight:600;
+  }
+  .card-head .idx{
+    font-size:11px;letter-spacing:2px;color:var(--gold-dim);text-transform:uppercase;
+  }
+
+  /* ---------- FIELDS ---------- */
+  .field-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+  .field{flex:1;min-width:120px;}
+  .field label{
+    display:block;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#9A9488;margin-bottom:6px;
+  }
+  .field-combo{display:flex;gap:6px;}
+  input[type=number]{
+    width:100%;background:var(--black-3);border:1px solid var(--line);color:var(--paper);
+    padding:10px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14.5px;
+    transition:border-color .15s ease;
+  }
+  input[type=number]:focus{outline:none;border-color:var(--gold);}
+  select{
+    background:var(--black-3);border:1px solid var(--line);color:var(--gold-light);
+    padding:10px 8px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;
+  }
+  select:focus{outline:none;border-color:var(--gold);}
+
+  /* ---------- RESULT STRIP ---------- */
+  .results{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:18px;
+  }
+  .result-box{
+    background:var(--black-3);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+    border-left:3px solid var(--gold);
+  }
+  .result-box .lbl{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:#8F8A7C;}
+  .result-box .val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold-light);font-weight:600;margin-top:4px;}
+  .result-box .unit{font-size:12px;color:#7C776A;margin-left:4px;}
+
+  /* ---------- LAYER BLOCK (Bracing Estimate) ---------- */
+  .layer-card{
+    background:var(--black-2);border:1px solid var(--line);border-radius:10px;margin-bottom:20px;overflow:hidden;
+  }
+  .layer-head{
+    display:flex;align-items:center;justify-content:space-between;padding:16px 22px;
+    background:linear-gradient(90deg, rgba(201,168,76,0.10), transparent);
+    border-bottom:1px solid var(--line);cursor:pointer;
+  }
+  .layer-head h3{
+    font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-light);margin:0;font-weight:600;
+    display:flex;align-items:center;gap:10px;
+  }
+  .layer-num{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--gold-dim);color:var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:700;
+  }
+  .layer-total{font-size:15px;color:var(--paper);}
+  .layer-total b{color:var(--gold-light);font-family:'Cormorant Garamond',serif;font-size:19px;}
+  .layer-body{padding:20px 22px 6px;}
+  .caret{color:var(--gold);transition:transform .2s ease;font-size:13px;}
+  .layer-card.collapsed .layer-body{display:none;}
+  .layer-card.collapsed .caret{transform:rotate(-90deg);}
+
+  .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:16px;}
+  @media (max-width:640px){.subgrid{grid-template-columns:1fr;}}
+  .sub-block{
+    background:var(--black-3);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  }
+  .sub-block .sb-title{
+    font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:600;
+  }
+  .mini-row{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;}
+  .mini-field{flex:1;}
+  .mini-field label{font-size:10px;color:#8F8A7C;letter-spacing:0.6px;display:block;margin-bottom:5px;}
+  .weight-tag{
+    font-size:12.5px;color:#B9B4A6;margin-top:4px;
+  }
+  .weight-tag b{color:var(--gold-light);}
+
+  .length-row{
+    display:flex;align-items:flex-end;gap:12px;padding-top:4px;border-top:1px dashed var(--line);margin-top:4px;
+  }
+
+  /* ---------- GRAND TOTAL ---------- */
+  .grand-total{
+    background:linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.03));
+    border:1px solid var(--gold-dim);border-radius:10px;padding:26px 28px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:8px;
+  }
+  .grand-total .lbl{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--paper);}
+  .grand-total .val{font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold-light);font-weight:700;}
+  .grand-total .val span{font-size:18px;color:#C7C0AE;margin-left:6px;}
+
+  /* breakdown table */
+  .breakdown{width:100%;border-collapse:collapse;margin-top:18px;font-size:13.5px;}
+  .breakdown th{
+    text-align:left;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:#8F8A7C;
+    padding:8px 10px;border-bottom:1px solid var(--line);
+  }
+  .breakdown td{padding:9px 10px;border-bottom:1px solid var(--line);color:#D8D3C6;}
+  .breakdown tr:last-child td{border-bottom:none;}
+  .breakdown td.num, .breakdown th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .breakdown tr.total-row td{color:var(--gold-light);font-weight:700;border-top:1px solid var(--gold-dim);}
+
+  /* buttons */
+  .actions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;}
+  .btn{
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.5px;
+    padding:11px 20px;border-radius:6px;cursor:pointer;border:1px solid var(--gold-dim);
+    background:transparent;color:var(--gold-light);transition:all .15s ease;
+  }
+  .btn:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
+  .btn.primary{background:var(--gold);color:var(--black);}
+  .btn.primary:hover{background:var(--gold-light);}
+  .btn.ghost{border-color:var(--line);color:#9A9488;}
+  .btn.ghost:hover{background:var(--black-3);color:var(--paper);border-color:var(--line);}
+
+  .note{
+    font-size:12.5px;color:#847E70;margin-top:14px;line-height:1.6;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center;padding:34px 24px 10px;border-top:1px solid var(--line);margin-top:40px;color:#726C5E;font-size:12px;
+  }
+  footer .fname{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:1px;}
+  footer .contact{margin-top:8px;line-height:1.9;}
+  footer a{color:#9A9488;text-decoration:none;}
+
+  @media print{
+    body{background:#fff;color:#111;}
+    .tabs,.actions,.btn{display:none !important;}
+    header.top{background:#fff;border-bottom:2px solid #C9A84C;}
+    .card,.layer-card{border-color:#ccc;background:#fff;}
+    .toolname h1{-webkit-text-fill-color:#8A6D1F;background:none;color:#8A6D1F;}
+  }
+
+  @media (max-width:560px){
+    .toolname h1{font-size:32px;}
+    .top-inner{flex-direction:column;align-items:flex-start;}
+    .tagline{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M28 50c0-11 8-19 18-19 7 0 12 4 16 9l4 5-4 5c-4 5-9 9-16 9-10 0-18-8-18-19z" stroke="#C9A84C" stroke-width="4"/>
+        <path d="M72 50c0-11-8-19-18-19-7 0-12 4-16 9l-4 5 4 5c4 5 9 9 16 9 10 0 18-8 18-19z" stroke="#C9A84C" stroke-width="4"/>
+        <circle cx="50" cy="50" r="3.2" fill="#C9A84C"/>
+      </svg>
+      <div class="brand-text">
+        <div class="name">INFINITY</div>
+        <div class="sub">Design &amp; Consultant</div>
+      </div>
+    </div>
+    <div class="tagline">Infinity Ideas, Exceptional Results</div>
+  </div>
+  <div class="toolname">
+    <h1>Bracing Estimate Calculator</h1>
+    <p>MS Flat Bar weight calculation &amp; multi‑layer I‑section bracing estimator, in kilograms</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="flatbar">MS Flat Bar Calculator</button>
+    <button class="tab-btn" data-tab="bracing">Bracing Estimate</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===================== TAB 1: MS FLAT BAR ===================== -->
+  <section id="flatbar" class="panel active">
+    <div class="card">
+      <div class="card-head">
+        <h2>MS Flat Calculator</h2>
+        <span class="idx">Steel density 7850 kg/m³</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>A = Width</label>
+          <div class="field-combo">
+            <input type="number" id="fb-A" value="1" step="any">
+            <select id="fb-Au"><option>ft</option><option>mm</option><option>cm</option><option>inch</option><option>m</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>B = Thickness</label>
+          <div class="field-combo">
+            <input type="number" id="fb-B" value="6" step="any">
+            <select id="fb-Bu"><option>mm</option><option>ft</option><option>cm</option><option>inch</option><option>m</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>C = Length</label>
+          <div class="field-combo">
+            <input type="number" id="fb-C" value="1" step="any">
+            <select id="fb-Cu"><option>ft</option><option>mm</option><option>cm</option><option>inch</option><option>m</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Area unit</label>
+          <select id="fb-areaU"><option>mm²</option><option>cm²</option><option>inch²</option><option>ft²</option><option>m²</option></select>
+        </div>
+        <div class="field">
+          <label>Volume unit</label>
+          <select id="fb-volU"><option>ft³</option><option>mm³</option><option>cm³</option><option>inch³</option><option>m³</option></select>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-box">
+          <div class="lbl">Total Weight</div>
+          <div class="val" id="fb-weight">0.00<span class="unit">kg</span></div>
+        </div>
+        <div class="result-box">
+          <div class="lbl">Area</div>
+          <div class="val" id="fb-area">0.00<span class="unit" id="fb-area-unit">mm²</span></div>
+        </div>
+        <div class="result-box">
+          <div class="lbl">Volume</div>
+          <div class="val" id="fb-volume">0.00<span class="unit" id="fb-vol-unit">ft³</span></div>
+        </div>
+      </div>
+      <p class="note">Weight = A × B × C × 7850 kg/m³, after converting each dimension to metres. Enter any combination of units — the calculator converts automatically.</p>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 2: BRACING ESTIMATE ===================== -->
+  <section id="bracing" class="panel">
+
+    <div id="layers-container"></div>
+
+    <div class="card" style="margin-top:6px;">
+      <div class="card-head">
+        <h2>Overall Summary</h2>
+        <span class="idx">All layers combined</span>
+      </div>
+      <table class="breakdown">
+        <thead>
+          <tr><th>Layer</th><th class="num">Flange (×2)</th><th class="num">Web</th><th class="num">Layer Total</th></tr>
+        </thead>
+        <tbody id="breakdown-body"></tbody>
+      </table>
+      <div class="grand-total">
+        <div class="lbl">Allover Bracing Work Total Weight</div>
+        <div class="val" id="grand-total">0.00 <span>kg</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="window.print()">Print / Save Report</button>
+        <button class="btn ghost" onclick="resetBracing()">Reset to Defaults</button>
+      </div>
+      <p class="note">Each layer is treated as an I‑section: two flanges (up side + down side, identical dimensions) plus one web, sharing a common bracing length. Formula per member: Weight = Width/Height × Thickness × Length × 7850 kg/m³, converted to metres.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="fname">INFINITY DESIGN &amp; CONSULTANT</div>
+  <div class="contact">
+    Engr. Amjad Hossain, CEO &amp; Chief Consultant · Dhaka &amp; Noakhali<br>
+    Hotline: +8801836‑934702 / +8809696‑982598 &nbsp;|&nbsp; <a href="mailto:info@infinitydesignbd.com">info@infinitydesignbd.com</a> &nbsp;|&nbsp; <a href="https://infinitydesignbd.com" target="_blank">infinitydesignbd.com</a>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   UNIT CONVERSION HELPERS
+   ============================================================ */
+const LEN_TO_M = { mm:0.001, cm:0.01, inch:0.0254, ft:0.3048, m:1 };
+const AREA_FROM_M2 = { 'mm²':1000000, 'cm²':10000, 'inch²':1550.0031, 'ft²':10.7639104, 'm²':1 };
+const VOL_FROM_M3 = { 'mm³':1000000000, 'cm³':1000000, 'inch³':61023.7440947323, 'ft³':35.3146667214886, 'm³':1 };
+const DENSITY = 7850; // kg/m3
+
+function toMeters(val, unit){ return val * (LEN_TO_M[unit] ?? 1); }
+
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================================================
+   MS FLAT BAR CALCULATOR
+   ============================================================ */
+function calcFlatBar(){
+  const A = parseFloat(document.getElementById('fb-A').value)||0;
+  const B = parseFloat(document.getElementById('fb-B').value)||0;
+  const C = parseFloat(document.getElementById('fb-C').value)||0;
+  const Au = document.getElementById('fb-Au').value;
+  const Bu = document.getElementById('fb-Bu').value;
+  const Cu = document.getElementById('fb-Cu').value;
+  const areaU = document.getElementById('fb-areaU').value;
+  const volU = document.getElementById('fb-volU').value;
+
+  const Am = toMeters(A,Au), Bm = toMeters(B,Bu), Cm = toMeters(C,Cu);
+
+  const weight = Am * Bm * Cm * DENSITY;
+  const areaM2 = Am * Bm;
+  const area = areaM2 * (AREA_FROM_M2[areaU] ?? 1);
+  const volM3 = Am * Bm * Cm;
+  const volume = volM3 * (VOL_FROM_M3[volU] ?? 1);
+
+  document.getElementById('fb-weight').innerHTML = weight.toFixed(4) + '<span class="unit">kg</span>';
+  document.getElementById('fb-area').innerHTML = area.toFixed(2) + '<span class="unit" id="fb-area-unit">'+areaU+'</span>';
+  document.getElementById('fb-volume').innerHTML = volume.toFixed(6) + '<span class="unit" id="fb-vol-unit">'+volU+'</span>';
+}
+['fb-A','fb-B','fb-C'].forEach(id=>document.getElementById(id).addEventListener('input',calcFlatBar));
+['fb-Au','fb-Bu','fb-Cu','fb-areaU','fb-volU'].forEach(id=>document.getElementById(id).addEventListener('change',calcFlatBar));
+
+/* ============================================================
+   BRACING ESTIMATE — 5 LAYERS
+   ============================================================ */
+const DEFAULT_LAYERS = [
+  { flangeT:6, flangeW:500, webT:6, webH:500, length:10 },
+  { flangeT:6, flangeW:200, webT:6, webH:500, length:10 },
+  { flangeT:6, flangeW:200, webT:6, webH:500, length:10 },
+  { flangeT:6, flangeW:200, webT:6, webH:500, length:10 },
+  { flangeT:6, flangeW:200, webT:6, webH:500, length:10 },
+];
+
+let layers = JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+
+function layerWeight(l){
+  const lenM = toMeters(l.length,'ft');
+  const flangeW1 = toMeters(l.flangeW,'mm') * toMeters(l.flangeT,'mm') * lenM * DENSITY;
+  const webW = toMeters(l.webH,'mm') * toMeters(l.webT,'mm') * lenM * DENSITY;
+  const flangeTotal = flangeW1 * 2; // up side + down side
+  return { flangeEach: flangeW1, flangeTotal, webW, total: flangeTotal + webW };
+}
+
+function renderLayers(){
+  const container = document.getElementById('layers-container');
+  container.innerHTML = '';
+  layers.forEach((l, i)=>{
+    const w = layerWeight(l);
+    const card = document.createElement('div');
+    card.className = 'layer-card';
+    card.id = 'layer-'+i;
+    card.innerHTML = `
+      <div class="layer-head" onclick="toggleLayer(${i})">
+        <h3><span class="layer-num">${i+1}</span> Layer ${i+1} Bracing</h3>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="layer-total">Total: <b id="layer-total-${i}">${w.total.toFixed(3)} kg</b></div>
+          <span class="caret">▾</span>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="subgrid">
+          <div class="sub-block">
+            <div class="sb-title">Flange (Up Side + Down Side)</div>
+            <div class="mini-row">
+              <div class="mini-field">
+                <label>Thickness (mm)</label>
+                <input type="number" step="any" value="${l.flangeT}" oninput="updateLayer(${i},'flangeT',this.value)">
+              </div>
+              <div class="mini-field">
+                <label>Width (mm)</label>
+                <input type="number" step="any" value="${l.flangeW}" oninput="updateLayer(${i},'flangeW',this.value)">
+              </div>
+            </div>
+            <div class="weight-tag">Each flange: <b id="flange-each-${i}">${w.flangeEach.toFixed(3)} kg</b> &nbsp;·&nbsp; ×2 = <b id="flange-total-${i}">${w.flangeTotal.toFixed(3)} kg</b></div>
+          </div>
+          <div class="sub-block">
+            <div class="sb-title">Web</div>
+            <div class="mini-row">
+              <div class="mini-field">
+                <label>Thickness (mm)</label>
+                <input type="number" step="any" value="${l.webT}" oninput="updateLayer(${i},'webT',this.value)">
+              </div>
+              <div class="mini-field">
+                <label>Height (mm)</label>
+                <input type="number" step="any" value="${l.webH}" oninput="updateLayer(${i},'webH',this.value)">
+              </div>
+            </div>
+            <div class="weight-tag">Web weight: <b id="web-total-${i}">${w.webW.toFixed(3)} kg</b></div>
+          </div>
+        </div>
+        <div class="length-row">
+          <div class="mini-field" style="max-width:180px;">
+            <label>Total Bracing Length (ft)</label>
+            <input type="number" step="any" value="${l.length}" oninput="updateLayer(${i},'length',this.value)">
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateLayer(i, key, val){
+  layers[i][key] = parseFloat(val) || 0;
+  const w = layerWeight(layers[i]);
+  document.getElementById('layer-total-'+i).textContent = w.total.toFixed(3) + ' kg';
+  document.getElementById('flange-each-'+i).textContent = w.flangeEach.toFixed(3) + ' kg';
+  document.getElementById('flange-total-'+i).textContent = w.flangeTotal.toFixed(3) + ' kg';
+  document.getElementById('web-total-'+i).textContent = w.webW.toFixed(3) + ' kg';
+  renderSummary();
+}
+
+function toggleLayer(i){
+  document.getElementById('layer-'+i).classList.toggle('collapsed');
+}
+
+function renderSummary(){
+  const body = document.getElementById('breakdown-body');
+  body.innerHTML = '';
+  let grand = 0;
+  layers.forEach((l,i)=>{
+    const w = layerWeight(l);
+    grand += w.total;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>Layer ${i+1}</td><td class="num">${w.flangeTotal.toFixed(3)}</td><td class="num">${w.webW.toFixed(3)}</td><td class="num">${w.total.toFixed(3)}</td>`;
+    body.appendChild(tr);
+  });
+  const totalRow = document.createElement('tr');
+  totalRow.className = 'total-row';
+  totalRow.innerHTML = `<td>Allover Total</td><td class="num"></td><td class="num"></td><td class="num">${grand.toFixed(3)} kg</td>`;
+  body.appendChild(totalRow);
+  document.getElementById('grand-total').innerHTML = grand.toFixed(3) + ' <span>kg</span>';
+}
+
+function resetBracing(){
+  layers = JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+  renderLayers();
+  renderSummary();
+}
+
+/* init */
+calcFlatBar();
+renderLayers();
+renderSummary();
+</script>
+
+</body>
+</html>
